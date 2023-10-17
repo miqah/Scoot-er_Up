@@ -106,7 +106,7 @@ public class DragAndShoot : MonoBehaviour
         lineRenderer.enabled = true;
     }
 
-    Color CalculateLineColor(float lineLength)
+Color CalculateLineColor(float lineLength)
 {
     if (lineLength >= maxLineLength)
     {

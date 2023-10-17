@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class InputHandler : MonoBehaviour
 {
@@ -29,6 +30,11 @@ public class InputHandler : MonoBehaviour
         {
            playerMovement.StopCharacter();
         }  
+
+        if (Input.GetKey(KeyCode.M))
+        {
+            SceneManager.LoadScene("MainMenuScene");
+        }
     }
 
   
