@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Bouncey
   - Character
+  - Ui background
+  - Ui Front
   layers:
   - Default
   - TransparentFX

@@ -30,19 +30,44 @@ public class DragAndShoot : MonoBehaviour
     {
         Vector3 currentMousePosition = Input.mousePosition;
         Vector2 distance = Camera.main.ScreenToWorldPoint(currentMousePosition) - initialObjectPosition;
+        
         throwV = -distance.normalized;
+        
+         
         CalculateThrowVector(); 
         SetLineRenderer();
+
+        
+        if (throwV.x < 0)
+        {
+            transform.localScale = new Vector3(-0.666f, 0.666f, 1);
+        }
+        else if (throwV.x > 0)
+        {
+            transform.localScale = new Vector3(0.666f, 0.666f, 1);
+        }
+      
     } 
 
     void OnMouseUp()
     {
         lineRenderer.enabled = false;
+        
         if (isTouchingGround)
         {
             float distance = Vector3.Distance(initialMousePosition, Input.mousePosition);
-            float normalizedDistance = Mathf.Clamp01(distance / 100f); // Adjust as needed
+            float normalizedDistance = Mathf.Clamp01(distance / 100f); 
             float calculatedThrowStrength = Mathf.Lerp(minThrowStrength, maxThrowStrength, normalizedDistance);
+
+            if (throwV.x < 0)
+            {
+                transform.localScale = new Vector3(-.666f, .666f, 1);
+            }
+            else if (throwV.x > 0)
+            {
+                transform.localScale = new Vector3(.666f, .666f, 1);
+            }
+
             rigidBody.AddForce(throwV * calculatedThrowStrength);
         }
     }
@@ -64,10 +89,36 @@ public class DragAndShoot : MonoBehaviour
         float distance = Vector3.Distance(initialMousePosition, Input.mousePosition);
         float normalizedDistance = Mathf.Clamp01(distance / 100f); 
         float lineLength = Mathf.Lerp(minLineLength, maxLineLength, normalizedDistance);
-
-        Vector3 lineEndPosition = throwV.normalized * lineLength;
-
-        lineRenderer.SetPosition(1, lineEndPosition);
+        
+        if (transform.localScale.x < 0)
+        { 
+          Vector3 lineEndPosition = throwV.normalized * lineLength;
+        
+            lineEndPosition.x = -lineEndPosition.x;
+            lineRenderer.SetPosition(1, lineEndPosition);
+      }
+        else
+        {
+            Vector3 lineEndPosition = throwV.normalized * lineLength;
+            lineRenderer.SetPosition(1, lineEndPosition);
+        }
+        lineRenderer.material.color = CalculateLineColor(lineLength);
         lineRenderer.enabled = true;
     }
+
+    Color CalculateLineColor(float lineLength)
+{
+    if (lineLength >= maxLineLength)
+    {
+        return Color.red;
+    }
+    else if (lineLength >= maxLineLength * 0.5f)
+    {
+        return Color.green;
+    }
+    else
+    {
+        return Color.yellow;
+    }
+}
 }
