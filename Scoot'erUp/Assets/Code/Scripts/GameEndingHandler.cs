@@ -10,11 +10,13 @@ public class GameEndController : MonoBehaviour
     [SerializeField] TimeUpScript timer;
     [SerializeField] Button button1;
     [SerializeField] Button button2;
+    [SerializeField] Leaderboard leaderboard;
     public string playerTag = "Player"; 
     public Text winText; 
 
     private void Start()
-    {
+    {   
+        // Now that I am looking back this class is not efficient. I should have just added everything to a canvas.
         winText.gameObject.SetActive(false);
         
         button1.gameObject.SetActive(false);
@@ -26,17 +28,21 @@ public class GameEndController : MonoBehaviour
         button1.onClick.AddListener(GoToMainMenu);
 
         button2.onClick.AddListener(RestartScene);
+        Time.timeScale = 1f;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player")
         {   
-            ShowWinText();
+            double finalTime = ShowWinText();
+            Time.timeScale = 0f;
+            ScoreManager.instance.AddScore("PlayerName", finalTime);
+            // leaderboard.UpdateLeaderboard();
         }
     }
 
-    void ShowWinText()
+    private double ShowWinText()
     {   
         winText.gameObject.SetActive(true);
         double elapsedTime = timer.getElapsedTime();
@@ -54,6 +60,7 @@ public class GameEndController : MonoBehaviour
         
         dialogBox.gameObject.SetActive(true);
         
+        return elapsedTime;
     }
 
     void GoToMainMenu()

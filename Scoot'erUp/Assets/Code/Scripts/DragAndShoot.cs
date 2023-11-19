@@ -5,70 +5,110 @@ using UnityEngine;
 public class DragAndShoot : MonoBehaviour
 {
     Vector3 throwV;
-    Vector3 initialMousePosition; 
-    [SerializeField] Rigidbody2D rigidBody;
-    [SerializeField] LineRenderer lineRenderer;
-    [SerializeField] float minThrowStrength = 10f; 
-    [SerializeField] float maxThrowStrength = 600f; 
-    [SerializeField] float groundRadius;
-    [SerializeField] LayerMask groundLayer;
+    Vector3 initialMousePosition;
+
+    [SerializeField]
+    Rigidbody2D rigidBody;
+
+    [SerializeField]
+    LineRenderer lineRenderer;
+
+    [SerializeField]
+    float minThrowStrength = 10f;
+
+    [SerializeField]
+    float maxThrowStrength = 600f;
+
+    [SerializeField]
+    float groundRadius;
+
+    [SerializeField]
+    LayerMask groundLayer;
+
+    [SerializeField]
+    LayerMask movingPlatformLayer;
     private Vector3 initialObjectPosition;
-    [SerializeField] float minLineLength = 0.05f; 
-    [SerializeField] float maxLineLength = 1f;
+
+    [SerializeField]
+    LayerMask bounceyLayer;
+
+    [SerializeField]
+    float minLineLength = 0.05f;
+
+    [SerializeField]
+    float maxLineLength = 1f;
     
     bool isTouchingGround = true;
+    bool isBeingDragged = false;
+    bool canBounceAgain = false;
 
+    [SerializeField] SoundManager soundManager;
     void OnMouseDown()
     {
-        initialMousePosition = Input.mousePosition;
-        initialObjectPosition = transform.position; 
-        CalculateThrowVector();
-        SetLineRenderer();
+        if (!isBeingDragged)
+        {
+            initialMousePosition = Input.mousePosition;
+            initialObjectPosition = transform.position;
+            CalculateThrowVector();
+            SetLineRenderer();
+
+            isBeingDragged = true;
+        }
     }
 
     void OnMouseDrag()
     {
-        Vector3 currentMousePosition = Input.mousePosition;
-        Vector2 distance = Camera.main.ScreenToWorldPoint(currentMousePosition) - initialObjectPosition;
-        
-        throwV = -distance.normalized;
-        
-         
-        CalculateThrowVector(); 
-        SetLineRenderer();
+        if (isBeingDragged)
+        {
+            Vector3 currentMousePosition = Input.mousePosition;
+            Vector2 distance =
+                Camera.main.ScreenToWorldPoint(currentMousePosition) - initialObjectPosition;
 
-        
-        if (throwV.x < 0)
-        {
-            transform.localScale = new Vector3(-0.666f, 0.666f, 1);
+            throwV = -distance.normalized;
+
+            CalculateThrowVector();
+            SetLineRenderer();
+
+            float currentXScale = Mathf.Abs(transform.localScale.x);
+
+            transform.localScale = new Vector3(
+                throwV.x < 0 ? -currentXScale : currentXScale,
+                transform.localScale.y,
+                transform.localScale.z
+            );
         }
-        else if (throwV.x > 0)
-        {
-            transform.localScale = new Vector3(0.666f, 0.666f, 1);
-        }
-      
-    } 
+    }
 
     void OnMouseUp()
     {
-        lineRenderer.enabled = false;
-        
-        if (isTouchingGround)
+        if (isBeingDragged)
         {
-            float distance = Vector3.Distance(initialMousePosition, Input.mousePosition);
-            float normalizedDistance = Mathf.Clamp01(distance / 100f); 
-            float calculatedThrowStrength = Mathf.Lerp(minThrowStrength, maxThrowStrength, normalizedDistance);
+            soundManager.PlaySound("jump");
+            lineRenderer.enabled = false;
 
-            if (throwV.x < 0)
+            if (isTouchingGround || canBounceAgain)
             {
-                transform.localScale = new Vector3(-.666f, .666f, 1);
-            }
-            else if (throwV.x > 0)
-            {
-                transform.localScale = new Vector3(.666f, .666f, 1);
+                float distance = Vector3.Distance(initialMousePosition, Input.mousePosition);
+                float normalizedDistance = Mathf.Clamp01(distance / 100f);
+                float calculatedThrowStrength = Mathf.Lerp(
+                    minThrowStrength,
+                    maxThrowStrength,
+                    normalizedDistance
+                );
+
+                float currentXScale = Mathf.Abs(transform.localScale.x);
+
+                transform.localScale = new Vector3(
+                    throwV.x < 0 ? -currentXScale : currentXScale,
+                    transform.localScale.y,
+                    transform.localScale.z
+                );
+
+                rigidBody.AddForce(throwV * calculatedThrowStrength);
             }
 
-            rigidBody.AddForce(throwV * calculatedThrowStrength);
+            isBeingDragged = false;
+            canBounceAgain = false;
         }
     }
 
@@ -77,26 +117,24 @@ public class DragAndShoot : MonoBehaviour
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 distance = mousePosition - this.transform.position;
         throwV = -distance.normalized;
-
-        isTouchingGround = Physics2D.OverlapCircle(transform.position, groundRadius, groundLayer);
     }
 
     void SetLineRenderer()
-    { 
+    {
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, Vector3.zero);
 
         float distance = Vector3.Distance(initialMousePosition, Input.mousePosition);
-        float normalizedDistance = Mathf.Clamp01(distance / 100f); 
+        float normalizedDistance = Mathf.Clamp01(distance / 100f);
         float lineLength = Mathf.Lerp(minLineLength, maxLineLength, normalizedDistance);
-        
+
         if (transform.localScale.x < 0)
-        { 
-          Vector3 lineEndPosition = throwV.normalized * lineLength;
-        
+        {
+            Vector3 lineEndPosition = throwV.normalized * lineLength;
+
             lineEndPosition.x = -lineEndPosition.x;
             lineRenderer.SetPosition(1, lineEndPosition);
-      }
+        }
         else
         {
             Vector3 lineEndPosition = throwV.normalized * lineLength;
@@ -106,19 +144,32 @@ public class DragAndShoot : MonoBehaviour
         lineRenderer.enabled = true;
     }
 
-Color CalculateLineColor(float lineLength)
-{
-    if (lineLength >= maxLineLength)
+    Color CalculateLineColor(float lineLength)
     {
-        return Color.red;
+        if (lineLength >= maxLineLength)
+        {
+            return Color.red;
+        }
+        else if (lineLength >= maxLineLength * 0.5f)
+        {
+            return Color.green;
+        }
+        else
+        {
+            return Color.yellow;
+        }
     }
-    else if (lineLength >= maxLineLength * 0.5f)
+
+    void Update()
     {
-        return Color.green;
+        isTouchingGround = Physics2D.OverlapCircle(transform.position, groundRadius, groundLayer);
+        if (Physics2D.OverlapCircle(transform.position, groundRadius, bounceyLayer))
+        {
+            canBounceAgain = true;
+        }
+        else if (isTouchingGround)
+        {
+            canBounceAgain = false;
+        }
     }
-    else
-    {
-        return Color.yellow;
-    }
-}
 }

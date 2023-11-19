@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7158794101503762298}
   - component: {fileID: 714344708526714449}
   - component: {fileID: 5581511492782362970}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MovingPlatformVertical
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 510756105324492648}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -10.53, y: 42.01, z: 0}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6909a76abd522704e8b167b58b0b7551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0
+  speed: 5
   positionOne: {fileID: 0}
   positionTwo: {fileID: 0}
-  startingPoint: 0
+  startingPoint: 1

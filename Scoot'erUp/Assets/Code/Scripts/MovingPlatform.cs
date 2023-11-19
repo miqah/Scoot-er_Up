@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
-   
     public float speed;
     public Transform positionOne;
     public Transform positionTwo;
     private Transform currentTarget;
     public int startingPoint;
+
     void Start()
     {
         currentTarget = startingPoint == 0 ? positionOne : positionTwo;
@@ -18,7 +18,7 @@ public class MovingPlatform : MonoBehaviour
 
     void Update()
     {
-       if (Vector2.Distance(transform.position, currentTarget.position) <= 0.05f)
+        if (Vector2.Distance(transform.position, currentTarget.position) <= 0.001f)
         {
             currentTarget = (currentTarget == positionOne) ? positionTwo : positionOne;
         }
@@ -28,11 +28,23 @@ public class MovingPlatform : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        collision.transform.SetParent(transform);
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.transform.SetParent(transform);
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        collision.transform.SetParent(null);
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.transform.SetParent(null);
+        }
     }
 }
+
+
+
+
+
+
