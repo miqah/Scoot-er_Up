@@ -14,20 +14,18 @@ public class Leaderboard : MonoBehaviour
 
     public void UpdateLeaderboard()
     {
-        ScoreManager scoreManager = ScoreManager.instance;
+        ScoreManager scoreManager = ScoreManager.Instance;
 
         if (scoreManager != null)
         {
-            string leaderboardText = "Leaderboard\n";
+            string leaderboardText = "";
 
-            foreach (PlayerScore playerScore in scoreManager.GetScores())
-            {   
-                leaderboardText += $"{playerScore.playerName}: {playerScore.time}\n";
+            foreach (ScoreManager.ScoreEntry scoreEntry in scoreManager.GetScores())
+            {
+                leaderboardText += $"{scoreEntry.playerName}: {scoreEntry.time:F3}\n";
             }
 
             this.leaderboardText.text = leaderboardText;
         }
-
     }
-
 }

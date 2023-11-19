@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class PlayerScore
@@ -11,87 +10,110 @@ public class PlayerScore
 
 public class ScoreManager : MonoBehaviour
 {
-    public static ScoreManager instance;
+    public const int EntryCount = 5;
 
-    private List<PlayerScore> scores = new List<PlayerScore>();
-
-    private void Awake()
+    public struct ScoreEntry
     {
-        if (instance == null)
+        public string playerName;
+        public double time;
+
+        public ScoreEntry(string playerName, double time)
         {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
+            this.playerName = playerName;
+            this.time = time;
         }
     }
 
-    public void AddScore(string playerName, double time)
+    private static ScoreManager scoreInstance;
+
+    public static ScoreManager Instance
     {
-        PlayerScore playerScore = new PlayerScore { playerName = playerName, time = time };
-
-        LoadScores();
-
-        bool isNewHighScore = false;
-
-        for (int i = 0; i < scores.Count; i++)
+        get
         {
-            if (time > scores[i].time)
+            if (scoreInstance == null)
             {
-                scores.Insert(i, playerScore);
-                scores.RemoveAt(scores.Count - 1);
-
-                isNewHighScore = true;
-                break;
+                scoreInstance = FindObjectOfType<ScoreManager>();
+                if (scoreInstance == null)
+                {
+                    GameObject go = new GameObject("ScoreManager");
+                    scoreInstance = go.AddComponent<ScoreManager>();
+                }
             }
-        }
-
-        if (!isNewHighScore)
-        {
-            Debug.Log("The new score is not higher than the top 5 scores. No update needed.");
-            return;
-        }
-
-        // Sort the list in descending order based on time (just to be sure)
-        scores = scores.OrderByDescending(score => score.time).ToList();
-
-        SaveScores();
-
-        Debug.Log($"Score added: PlayerName: {playerName}, Time: {time}");
-
-        Debug.Log("Top 5 Scores:");
-        foreach (var score in scores)
-        {
-            Debug.Log($"PlayerName: {score.playerName}, Time: {score.time}");
+            return scoreInstance;
         }
     }
 
-    public List<PlayerScore> GetScores()
+    private List<ScoreEntry> mEntries;
+
+    private List<ScoreEntry> Entries
     {
-        LoadScores();
-        return scores;
+        get
+        {
+            if (mEntries == null)
+            {
+                mEntries = new List<ScoreEntry>();
+                LoadScores();
+            }
+            return mEntries;
+        }
     }
 
-    private void SaveScores()
-    {
-        string json = JsonUtility.ToJson(scores);
-        PlayerPrefs.SetString("PlayerScores", json);
+    private const string PlayerPrefsBaseKey = "scoreboard";
 
-        Debug.Log("Scores saved");
+    private void SortScores()
+    {
+        mEntries.Sort((a, b) => a.time.CompareTo(b.time));
     }
 
     private void LoadScores()
     {
-        string json = PlayerPrefs.GetString("PlayerScores");
-        scores = JsonUtility.FromJson<List<PlayerScore>>(json);
+        mEntries = new List<ScoreEntry>();
 
-        if (scores == null)
+        for (int i = 0; i < EntryCount; ++i)
         {
-            scores = new List<PlayerScore>();
+            ScoreEntry entry;
+            entry.playerName = PlayerPrefs.GetString(PlayerPrefsBaseKey + "[" + i + "].name", "");
+            entry.time = PlayerPrefs.GetFloat(PlayerPrefsBaseKey + "[" + i + "].time", 0f);
+            mEntries.Add(entry);
         }
 
-        Debug.Log("Scores loaded");
+        SortScores();
+    }
+
+    private void SaveScores()
+    {
+        for (int i = 0; i < EntryCount; ++i)
+        {
+            var entry = mEntries[i];
+            PlayerPrefs.SetString(PlayerPrefsBaseKey + "[" + i + "].name", entry.playerName);
+            PlayerPrefs.SetFloat(PlayerPrefsBaseKey + "[" + i + "].time", (float)entry.time);
+        }
+
+        PlayerPrefs.Save();
+    }
+
+    public ScoreEntry GetEntry(int index)
+    {
+        return Entries[index];
+    }
+
+    public List<ScoreEntry> GetScores()
+    {
+        return Entries;
+    }
+
+    public void Record(string playerName, double time)
+    {
+        ScoreEntry newEntry = new ScoreEntry(playerName, time);
+        Entries.Add(newEntry);
+        SortScores();
+        Entries.RemoveAt(Entries.Count - 1);
+        SaveScores();
+    }
+
+    public bool IsPlayerScoreTop5(double playerScore)
+    {   
+        LoadScores();
+        return Entries.Count < EntryCount || Entries[EntryCount - 1].time > playerScore;
     }
 }
