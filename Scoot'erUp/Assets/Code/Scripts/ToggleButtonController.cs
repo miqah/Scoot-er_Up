@@ -6,14 +6,33 @@ using UnityEngine.SceneManagement;
 
 public class ToggleButtonController : MonoBehaviour
 {
-    [SerializeField] Text counterText;
-    [SerializeField] Toggle timerToggle;
-    [SerializeField] Toggle fullscreenToggle;
-    [SerializeField] Text labelText;
-    [SerializeField] Text fullScreenText;
- 
+    [SerializeField]
+    Text counterText;
+
+    [SerializeField]
+    Toggle timerToggle;
+
+    [SerializeField]
+    Toggle fullscreenToggle;
+
+    [SerializeField]
+    Text labelText;
+
+    [SerializeField]
+    Text fullScreenText;
+
+    [SerializeField]
+    Text distanceText;
+
+    [SerializeField]
+    Toggle distanceToggle;
+
+    [SerializeField]
+    Text distanceTextInUI;
+
     private const string counterTextKey = "counterText";
     private const string fullscreenKey = "fullscreen";
+    private const string distanceTextKey = "distanceText";
 
     public void ChangeText()
     {
@@ -45,8 +64,9 @@ public class ToggleButtonController : MonoBehaviour
         }
     }
 
-    public void ChangeFullscreen(){
-       if (fullscreenToggle.isOn)
+    public void ChangeFullscreen()
+    {
+        if (fullscreenToggle.isOn)
         {
             Screen.fullScreen = true;
             PlayerPrefs.SetInt(fullscreenKey, 0);
@@ -60,17 +80,36 @@ public class ToggleButtonController : MonoBehaviour
         }
     }
 
+    public void ToggleDistanceText()
+    {
+        if (distanceToggle.isOn)
+        {
+            PlayerPrefs.SetInt(distanceTextKey, 0);
+            distanceText.text = "Distance On";
+            distanceTextInUI.enabled = true;
+        }
+        else
+        {
+            PlayerPrefs.SetInt(distanceTextKey, 1);
+            distanceText.text = "Distance Off";
+            distanceTextInUI.enabled = false;
+        }
+    }
+
     public void Start()
     {
         timerToggle.isOn = PlayerPrefs.GetInt(counterTextKey) == 0;
-        
-        if (timerToggle.isOn == true && SceneManager.GetActiveScene().name != "MainMenuScene" ) {
-          counterText.enabled = true;
-        } else {
-          counterText.enabled = false;
-        }
         fullscreenToggle.isOn = PlayerPrefs.GetInt(fullscreenKey) == 0;
-
+        distanceToggle.isOn = PlayerPrefs.GetInt(distanceTextKey) == 0;
         Screen.fullScreen = fullscreenToggle.isOn;
+
+        if (timerToggle.isOn && SceneManager.GetActiveScene().name != "MainMenuScene")
+        {
+            counterText.enabled = true;
+        }
+        else
+        {
+            counterText.enabled = false;
+        }
     }
 }
