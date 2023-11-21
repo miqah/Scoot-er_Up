@@ -37,12 +37,14 @@ public class DragAndShoot : MonoBehaviour
 
     [SerializeField]
     float maxLineLength = 1f;
-    
+
     bool isTouchingGround = true;
     bool isBeingDragged = false;
     bool canBounceAgain = false;
 
-    [SerializeField] SoundManager soundManager;
+    [SerializeField]
+    SoundManager soundManager;
+
     void OnMouseDown()
     {
         if (!isBeingDragged)

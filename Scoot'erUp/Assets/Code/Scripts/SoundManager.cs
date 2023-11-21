@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 public class SoundManager : MonoBehaviour
 {
-    [SerializeField] AudioClip dirtSound, jumpSound, bounceySound;
+    [SerializeField] AudioClip dirtSound, jumpSound, bounceySound, clickSound, closeMenu;
     [SerializeField] AudioSource audioSource;
     
     public void PlaySound (string clip)
@@ -18,6 +18,12 @@ public class SoundManager : MonoBehaviour
             break;
           case "bounce":
             audioSource.PlayOneShot(bounceySound);
+            break;
+          case "click":
+            audioSource.PlayOneShot(clickSound);
+            break;
+          case "closeMenu":
+            audioSource.PlayOneShot(closeMenu);
             break;
         }
     }

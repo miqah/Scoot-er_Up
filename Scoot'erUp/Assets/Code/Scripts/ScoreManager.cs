@@ -35,8 +35,8 @@ public class ScoreManager : MonoBehaviour
                 scoreInstance = FindObjectOfType<ScoreManager>();
                 if (scoreInstance == null)
                 {
-                    GameObject go = new GameObject("ScoreManager");
-                    scoreInstance = go.AddComponent<ScoreManager>();
+                    GameObject gameObject = new GameObject("ScoreManager");
+                    scoreInstance = gameObject.AddComponent<ScoreManager>();
                 }
             }
             return scoreInstance;
@@ -58,8 +58,6 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    private const string PlayerPrefsBaseKey = "scoreboard";
-
     private void SortScores()
     {
         mEntries.Sort((a, b) => a.time.CompareTo(b.time));
@@ -72,8 +70,8 @@ public class ScoreManager : MonoBehaviour
         for (int i = 0; i < EntryCount; ++i)
         {
             ScoreEntry entry;
-            entry.playerName = PlayerPrefs.GetString(PlayerPrefsBaseKey + "[" + i + "].name", "");
-            entry.time = PlayerPrefs.GetFloat(PlayerPrefsBaseKey + "[" + i + "].time", 0f);
+            entry.playerName = PlayerPrefs.GetString("scoreboard" + "[" + i + "].name", "");
+            entry.time = PlayerPrefs.GetFloat("scoreboard" + "[" + i + "].time", 0f);
             mEntries.Add(entry);
         }
 
@@ -85,8 +83,8 @@ public class ScoreManager : MonoBehaviour
         for (int i = 0; i < EntryCount; ++i)
         {
             var entry = mEntries[i];
-            PlayerPrefs.SetString(PlayerPrefsBaseKey + "[" + i + "].name", entry.playerName);
-            PlayerPrefs.SetFloat(PlayerPrefsBaseKey + "[" + i + "].time", (float)entry.time);
+            PlayerPrefs.SetString("scoreboard" + "[" + i + "].name", entry.playerName);
+            PlayerPrefs.SetFloat("scoreboard" + "[" + i + "].time", (float)entry.time);
         }
 
         PlayerPrefs.Save();
@@ -112,7 +110,7 @@ public class ScoreManager : MonoBehaviour
     }
 
     public bool IsPlayerScoreTop5(double playerScore)
-    {   
+    {
         LoadScores();
         return Entries.Count < EntryCount || Entries[EntryCount - 1].time > playerScore;
     }

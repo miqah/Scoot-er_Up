@@ -10,7 +10,7 @@ public class GameEndController : MonoBehaviour
     GameObject dialogBox;
 
     [SerializeField]
-    TimeUpScript timer;
+    Timer timer;
 
     [SerializeField]
     Button button1;

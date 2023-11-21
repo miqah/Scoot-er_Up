@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TimeUpScript : MonoBehaviour
+public class Timer : MonoBehaviour
 {
-    [SerializeField] Text timerText;
+    [SerializeField]
+    Text timerText;
     private float elapsedTime = 0.0f;
+
+    public void Awake()
+    {
+        elapsedTime = PlayerPrefs.GetFloat("TimerCount");
+    }
 
     void Update()
     {
@@ -16,11 +22,16 @@ public class TimeUpScript : MonoBehaviour
 
     void UpdateTimerText()
     {
-        timerText.text = "Time: " + elapsedTime.ToString("F2"); 
+        timerText.text = "Time: " + elapsedTime.ToString("F2");
     }
 
     public float getElapsedTime()
     {
         return elapsedTime;
+    }
+
+    public void setElapsedTime(float time)
+    {
+        elapsedTime = time;
     }
 }
