@@ -10,6 +10,19 @@ public class PlayerScore
 
 public class ScoreManager : MonoBehaviour
 {
+    private void Awake()
+    {
+        if (scoreInstance == null)
+        {
+            scoreInstance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public const int EntryCount = 5;
 
     public struct ScoreEntry
@@ -113,5 +126,16 @@ public class ScoreManager : MonoBehaviour
     {
         LoadScores();
         return Entries.Count < EntryCount || Entries[EntryCount - 1].time > playerScore;
+    }
+
+    public void ClearLeaderboard()
+    {
+        mEntries.Clear();
+        for (int i = 0; i < EntryCount; ++i)
+        {
+            ScoreEntry emptyEntry = new ScoreEntry("", 99999);
+            mEntries.Add(emptyEntry);
+        }
+        SaveScores();
     }
 }

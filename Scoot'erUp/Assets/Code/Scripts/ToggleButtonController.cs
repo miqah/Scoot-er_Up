@@ -40,13 +40,13 @@ public class ToggleButtonController : MonoBehaviour
         {
             PlayerPrefs.SetInt(counterTextKey, 0);
             counterText.enabled = true;
-            labelText.text = "Timer On";
+            labelText.text = "TIMER ON";
         }
         else
         {
             PlayerPrefs.SetInt(counterTextKey, 1);
             counterText.enabled = false;
-            labelText.text = "Timer Off";
+            labelText.text = "TIMER OFF";
         }
     }
 
@@ -55,12 +55,12 @@ public class ToggleButtonController : MonoBehaviour
         if (timerToggle.isOn)
         {
             PlayerPrefs.SetInt(counterTextKey, 0);
-            labelText.text = "Timer On";
+            labelText.text = "TIMER ON";
         }
         else
         {
             PlayerPrefs.SetInt(counterTextKey, 1);
-            labelText.text = "Timer Off";
+            labelText.text = "TIMER OFF";
         }
     }
 
@@ -70,13 +70,13 @@ public class ToggleButtonController : MonoBehaviour
         {
             Screen.fullScreen = true;
             PlayerPrefs.SetInt(fullscreenKey, 0);
-            fullScreenText.text = "FullScreen On";
+            fullScreenText.text = "FULLSCREEN ON";
         }
         else
         {
             Screen.fullScreen = false;
             PlayerPrefs.SetInt(fullscreenKey, 1);
-            fullScreenText.text = "FullScreen Off";
+            fullScreenText.text = "FULLSCREEN OFF";
         }
     }
 
@@ -85,14 +85,28 @@ public class ToggleButtonController : MonoBehaviour
         if (distanceToggle.isOn)
         {
             PlayerPrefs.SetInt(distanceTextKey, 0);
-            distanceText.text = "Distance On";
+            distanceText.text = "DISTANCE ON";
             distanceTextInUI.enabled = true;
         }
         else
         {
             PlayerPrefs.SetInt(distanceTextKey, 1);
-            distanceText.text = "Distance Off";
+            distanceText.text = "DISTANCE OFF";
             distanceTextInUI.enabled = false;
+        }
+    }
+
+    public void ToggleDistanceTextMainMenu()
+    {
+        if (distanceToggle.isOn)
+        {
+            PlayerPrefs.SetInt(distanceTextKey, 0);
+            distanceText.text = "DISTANCE ON";
+        }
+        else
+        {
+            PlayerPrefs.SetInt(distanceTextKey, 1);
+            distanceText.text = "DISTANCE OFF";
         }
     }
 

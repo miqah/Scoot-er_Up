@@ -28,4 +28,10 @@ public class Leaderboard : MonoBehaviour
             this.leaderboardText.text = leaderboardText;
         }
     }
+
+    public void ClearLeaderboard()
+    {
+        ScoreManager.Instance.ClearLeaderboard();
+        this.leaderboardText.text = "";
+    }
 }
