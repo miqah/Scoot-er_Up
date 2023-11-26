@@ -22,7 +22,8 @@ public class SignDialog : MonoBehaviour
     private string[] dialogs =
     {   
         "Cuppy, I'm so glad you're here. I'm currently watching the cupball game, and my child is with Mr. Plant. Could you please pick up my kid for me?\n\nWait, you can't recall the controls? No worries, I've got you covered",
-        "To halt your slide, tap 'S' on your trusty keyboard.\nUse your nimble mouse to drag and aim.\nReady? Release the button to propel yourself upward into the sky! Good luck!\n\t\t\t\t\tPress The Space Key to Close the Menu",
+        "To halt your slide, tap 'S' on your trusty keyboard.\nUse your nimble mouse to drag and aim.\nReady? Release the button to propel yourself upward into the sky! Good luck!\n\n\t\t\t\t\tPress The Space Key to Close the Menu!",
+        "Also... if you're the grader and you want to teleport to the end for easier grading click the 1 key on your keyboard.\n\n\t\t\t\t\tPress The Space Key to Close the Menu!",
     };
 
     private string helpMessage = "Press Space to Interact";

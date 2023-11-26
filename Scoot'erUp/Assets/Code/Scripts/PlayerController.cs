@@ -15,6 +15,7 @@ public class InputHandler : MonoBehaviour
     public Transform initialObject;
     public Text percentageText;
     private bool isPaused = false;
+    public Vector3 teleportDestination = new Vector3(-6.46f, 98.65f, 0f);
 
     private void Update()
     {
@@ -27,6 +28,11 @@ public class InputHandler : MonoBehaviour
         if (Input.GetKey(KeyCode.S))
         {
             playerMovement.StopCharacter();
+        }
+
+        if (Input.GetKey(KeyCode.Alpha1))
+        {
+            TeleportPlayerToEnd();
         }
 
         // if (Input.GetKey(KeyCode.M))
@@ -61,5 +67,10 @@ public class InputHandler : MonoBehaviour
         {
             percentageText.text = "Distance: " + percentage.ToString("F1") + "%";
         }
+    }
+
+    private void TeleportPlayerToEnd()
+    {
+        playerMovement.transform.position = teleportDestination;
     }
 }
